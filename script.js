@@ -1,175 +1,117 @@
-// --- 1. NEURAL BACKGROUND ANIMATION (Optimized) ---
-const canvas = document.getElementById('neural-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Initialisation de GSAP
+gsap.registerPlugin(ScrollTrigger);
 
-let particlesArray;
-let mouse = { x: null, y: null, radius: 150 };
+// --- 1. CURSEUR MAGNÉTIQUE AVANCÉ ---
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorOutline = document.querySelector('.cursor-outline');
+const magneticElements = document.querySelectorAll('.magnetic');
 
 window.addEventListener('mousemove', (e) => {
-    mouse.x = e.x;
-    mouse.y = e.y;
-    // Custom cursor movement
-    document.querySelector('.cursor').style.left = e.x + 'px';
-    document.querySelector('.cursor').style.top = e.y + 'px';
-    document.querySelector('.cursor2').style.left = e.x + 'px';
-    document.querySelector('.cursor2').style.top = e.y + 'px';
+    const posX = e.clientX;
+    const posY = e.clientY;
+
+    // Le point suit instantanément
+    cursorDot.style.left = `${posX}px`;
+    cursorDot.style.top = `${posY}px`;
+
+    // Le cercle suit avec un délai (smooth) via animation native JS pour perf
+    cursorOutline.animate({
+        left: `${posX}px`,
+        top: `${posY}px`
+    }, { duration: 500, fill: "forwards" });
 });
 
-class Particle {
-    constructor(x, y, directionX, directionY, size, color) {
-        this.x = x;
-        this.y = y;
-        this.directionX = directionX;
-        this.directionY = directionY;
-        this.size = size;
-        this.color = color;
-    }
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-        ctx.fillStyle = '#38bdf8';
-        ctx.fill();
-    }
-    update() {
-        if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-        if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-
-        // Mouse interaction
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx*dx + dy*dy);
-        if (distance < mouse.radius + this.size) {
-            if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 2;
-            if (mouse.x > this.x && this.x > this.size * 10) this.x -= 2;
-            if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 2;
-            if (mouse.y > this.y && this.y > this.size * 10) this.y -= 2;
-        }
-        this.x += this.directionX;
-        this.y += this.directionY;
-        this.draw();
-    }
-}
-
-function init() {
-    particlesArray = [];
-    let numberOfParticles = (canvas.height * canvas.width) / 15000; // Dense but light
-    for (let i = 0; i < numberOfParticles; i++) {
-        let size = (Math.random() * 2) + 0.5;
-        let x = Math.random() * canvas.width;
-        let y = Math.random() * canvas.height;
-        let dx = (Math.random() * 1) - 0.5;
-        let dy = (Math.random() * 1) - 0.5;
-        particlesArray.push(new Particle(x, y, dx, dy, size, '#38bdf8'));
-    }
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update();
-    }
-    connect();
-}
-
-function connect() {
-    for (let a = 0; a < particlesArray.length; a++) {
-        for (let b = a; b < particlesArray.length; b++) {
-            let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
-                         + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-            if (distance < (canvas.width/9) * (canvas.height/9)) {
-                let opacity = 1 - (distance / 15000);
-                ctx.strokeStyle = 'rgba(56, 189, 248,' + opacity + ')';
-                ctx.lineWidth = 0.5;
-                ctx.beginPath();
-                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                ctx.stroke();
-            }
-        }
-    }
-}
-init();
-animate();
-
-window.addEventListener('resize', () => {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-    init();
+// Effet magnétique sur les boutons
+magneticElements.forEach(elem => {
+    elem.addEventListener('mouseenter', () => {
+        document.body.classList.add('hovering');
+        gsap.to(elem, { scale: 1.1, duration: 0.3 });
+    });
+    elem.addEventListener('mouseleave', () => {
+        document.body.classList.remove('hovering');
+        gsap.to(elem, { scale: 1, duration: 0.3 });
+    });
 });
 
-// --- 2. TYPEWRITER EFFECT ---
-const textElement = document.querySelector('.typing-text');
-const words = ["Solutions.", "Secure Systems.", "Future AI.", "Innovation."];
-let wordIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
+// --- 2. HERO REVEAL ANIMATION ---
+const tl = gsap.timeline();
 
-const typeEffect = () => {
-    const currentWord = words[wordIndex];
-    const currentChar = currentWord.substring(0, charIndex);
-    textElement.textContent = currentChar;
+tl.from('.reveal-text', {
+    y: 50,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.2,
+    ease: "power4.out"
+})
+.from('.reveal-text-title', {
+    y: 100,
+    opacity: 0,
+    duration: 1.2,
+    ease: "power4.out"
+}, "-=0.8")
+.from('.hero-visual', {
+    x: 100,
+    opacity: 0,
+    duration: 1.5,
+    ease: "expo.out"
+}, "-=1");
 
-    if (!isDeleting && charIndex < currentWord.length) {
-        charIndex++;
-        setTimeout(typeEffect, 100);
-    } else if (isDeleting && charIndex > 0) {
-        charIndex--;
-        setTimeout(typeEffect, 50);
-    } else {
-        isDeleting = !isDeleting;
-        wordIndex = !isDeleting ? (wordIndex + 1) % words.length : wordIndex;
-        setTimeout(typeEffect, 1200);
-    }
-};
-typeEffect();
+// --- 3. FILTRAGE DES PROJETS (STYLE BENTO) ---
+const filterBtns = document.querySelectorAll('.filter-btn');
+const bentoItems = document.querySelectorAll('.bento-item');
 
-// --- 3. SKILL FILTERING SYSTEM (The "Highlight" Effect) ---
-const skillBtns = document.querySelectorAll('.skill-btn');
-const projectCards = document.querySelectorAll('.project-card');
-
-skillBtns.forEach(btn => {
+filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        // Toggle active state on button
-        // Remove active from others if you want single select, or toggle
-        if(btn.classList.contains('active')) {
-            btn.classList.remove('active');
-            resetProjects();
-        } else {
-            // Remove active from all others (optional, cleaner)
-            skillBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            filterProjects(btn.dataset.tech);
-        }
+        // Active Class
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filterValue = btn.getAttribute('data-filter');
+
+        bentoItems.forEach(item => {
+            const categories = item.getAttribute('data-category');
+            
+            if (filterValue === 'all' || categories.includes(filterValue)) {
+                gsap.to(item, { 
+                    scale: 1, 
+                    opacity: 1, 
+                    display: 'flex', 
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+            } else {
+                gsap.to(item, { 
+                    scale: 0.8, 
+                    opacity: 0, 
+                    display: 'none', 
+                    duration: 0.3 
+                });
+            }
+        });
     });
 });
 
-function filterProjects(tech) {
-    projectCards.forEach(card => {
-        const techs = card.dataset.techs.split(' ');
-        if (techs.includes(tech)) {
-            card.classList.remove('dimmed');
-            card.classList.add('highlighted');
-        } else {
-            card.classList.remove('highlighted');
-            card.classList.add('dimmed');
-        }
+// --- 4. SCROLL ANIMATIONS (Reveal au défilement) ---
+gsap.utils.toArray('.bento-item').forEach((item, i) => {
+    gsap.from(item, {
+        scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+        },
+        y: 100,
+        opacity: 0,
+        duration: 0.8,
+        delay: i * 0.1, // Petit délai en cascade
+        ease: "power2.out"
     });
-}
+});
 
-function resetProjects() {
-    projectCards.forEach(card => {
-        card.classList.remove('dimmed');
-        card.classList.remove('highlighted');
-    });
-}
+gsap.from('.about-image', {
+    scrollTrigger: { trigger: '#about', start: "top 70%" },
+    x: -100, opacity: 0, duration: 1, ease: "power2.out"
+});
 
-// --- 4. TILT EFFECT INIT ---
-VanillaTilt.init(document.querySelectorAll(".tilt"), {
-    max: 15,
-    speed: 400,
-    glare: true,
-    "max-glare": 0.2,
+gsap.from('.about-text', {
+    scrollTrigger: { trigger: '#about', start: "top 70%" },
+    x: 100, opacity: 0, duration: 1, ease: "power2.out"
 });
