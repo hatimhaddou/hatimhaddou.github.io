@@ -1,117 +1,181 @@
-// Initialisation de GSAP
-gsap.registerPlugin(ScrollTrigger);
-
-// --- 1. CURSEUR MAGNÉTIQUE AVANCÉ ---
-const cursorDot = document.querySelector('.cursor-dot');
-const cursorOutline = document.querySelector('.cursor-outline');
-const magneticElements = document.querySelectorAll('.magnetic');
-
-window.addEventListener('mousemove', (e) => {
-    const posX = e.clientX;
-    const posY = e.clientY;
-
-    // Le point suit instantanément
-    cursorDot.style.left = `${posX}px`;
-    cursorDot.style.top = `${posY}px`;
-
-    // Le cercle suit avec un délai (smooth) via animation native JS pour perf
-    cursorOutline.animate({
-        left: `${posX}px`,
-        top: `${posY}px`
-    }, { duration: 500, fill: "forwards" });
+// --- 1. SYSTEM INITIALIZATION (Loader) ---
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    setTimeout(() => {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 500);
+    }, 1500); // Fake loading time for effect
 });
 
-// Effet magnétique sur les boutons
-magneticElements.forEach(elem => {
-    elem.addEventListener('mouseenter', () => {
-        document.body.classList.add('hovering');
-        gsap.to(elem, { scale: 1.1, duration: 0.3 });
-    });
-    elem.addEventListener('mouseleave', () => {
-        document.body.classList.remove('hovering');
-        gsap.to(elem, { scale: 1, duration: 0.3 });
-    });
+// --- 2. THREE.JS 3D BACKGROUND (The "Waw" Factor) ---
+// We create a rotating cybernetic core
+const container = document.getElementById('canvas-container');
+
+// Scene setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
+
+// Create Geometry (Icosahedron = Techy shape)
+const geometry = new THREE.IcosahedronGeometry(1, 1);
+const material = new THREE.MeshBasicMaterial({ 
+    color: 0x00f3ff, // Cyan
+    wireframe: true,
+    transparent: true,
+    opacity: 0.3
+});
+const cyberCore = new THREE.Mesh(geometry, material);
+scene.add(cyberCore);
+
+// Add inner core (solid)
+const innerGeo = new THREE.IcosahedronGeometry(0.5, 0);
+const innerMat = new THREE.MeshBasicMaterial({ color: 0x7000ff, wireframe: true });
+const innerCore = new THREE.Mesh(innerGeo, innerMat);
+scene.add(innerCore);
+
+// Particles around
+const particlesGeo = new THREE.BufferGeometry();
+const particlesCount = 700;
+const posArray = new Float32Array(particlesCount * 3);
+
+for(let i = 0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 5; // Spread particles
+}
+
+particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+const particlesMat = new THREE.PointsMaterial({
+    size: 0.02,
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.5
+});
+const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+scene.add(particlesMesh);
+
+camera.position.z = 3;
+
+// Mouse Interaction
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener('mousemove', (event) => {
+    mouseX = event.clientX / window.innerWidth - 0.5;
+    mouseY = event.clientY / window.innerHeight - 0.5;
+    
+    // Custom Cursor Logic
+    const cursor = document.querySelector('.cursor');
+    cursor.style.left = event.clientX + 'px';
+    cursor.style.top = event.clientY + 'px';
 });
 
-// --- 2. HERO REVEAL ANIMATION ---
-const tl = gsap.timeline();
+// Animation Loop
+const animate = () => {
+    requestAnimationFrame(animate);
 
-tl.from('.reveal-text', {
-    y: 50,
-    opacity: 0,
-    duration: 1,
-    stagger: 0.2,
-    ease: "power4.out"
-})
-.from('.reveal-text-title', {
-    y: 100,
-    opacity: 0,
-    duration: 1.2,
-    ease: "power4.out"
-}, "-=0.8")
-.from('.hero-visual', {
-    x: 100,
-    opacity: 0,
-    duration: 1.5,
-    ease: "expo.out"
-}, "-=1");
+    // Rotate objects
+    cyberCore.rotation.y += 0.002;
+    cyberCore.rotation.x += 0.001;
+    innerCore.rotation.y -= 0.005;
+    innerCore.rotation.x -= 0.005;
+    particlesMesh.rotation.y = -mouseX * 0.5;
+    particlesMesh.rotation.x = -mouseY * 0.5;
 
-// --- 3. FILTRAGE DES PROJETS (STYLE BENTO) ---
-const filterBtns = document.querySelectorAll('.filter-btn');
-const bentoItems = document.querySelectorAll('.bento-item');
+    // Responsive follow mouse
+    cyberCore.rotation.y += mouseX * 0.05;
+    cyberCore.rotation.x += mouseY * 0.05;
 
-filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Active Class
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    renderer.render(scene, camera);
+};
 
-        const filterValue = btn.getAttribute('data-filter');
+animate();
 
-        bentoItems.forEach(item => {
-            const categories = item.getAttribute('data-category');
-            
-            if (filterValue === 'all' || categories.includes(filterValue)) {
-                gsap.to(item, { 
-                    scale: 1, 
-                    opacity: 1, 
-                    display: 'flex', 
-                    duration: 0.5,
-                    ease: "power2.out"
-                });
-            } else {
-                gsap.to(item, { 
-                    scale: 0.8, 
-                    opacity: 0, 
-                    display: 'none', 
-                    duration: 0.3 
-                });
+// Handle Resize
+window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
+
+
+// --- 3. EASTER EGG (Hacker Terminal) ---
+const terminalOverlay = document.getElementById('terminal-overlay');
+const terminalInput = document.getElementById('terminal-input');
+const terminalOutput = document.getElementById('terminal-output');
+let isTerminalOpen = false;
+
+document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 't' && !isTerminalOpen && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        isTerminalOpen = true;
+        terminalOverlay.style.display = 'flex';
+        terminalInput.focus();
+    } else if (e.key === 'Escape' && isTerminalOpen) {
+        closeTerminal();
+    }
+});
+
+terminalOverlay.addEventListener('click', (e) => {
+    if (e.target === terminalOverlay) closeTerminal();
+});
+
+function closeTerminal() {
+    isTerminalOpen = false;
+    terminalOverlay.style.display = 'none';
+}
+
+terminalInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const command = terminalInput.value.toLowerCase().trim();
+        printOutput(`hatim@root:~$ ${command}`);
+        processCommand(command);
+        terminalInput.value = '';
+    }
+});
+
+function printOutput(text) {
+    const p = document.createElement('p');
+    p.textContent = text;
+    // Insert before the input line
+    terminalOutput.insertBefore(p, terminalOutput.lastElementChild);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
+function processCommand(cmd) {
+    switch(cmd) {
+        case 'help':
+            printOutput('Available commands: help, clear, contact, skills, whoami, exit');
+            break;
+        case 'clear':
+            // Remove all p tags except the welcome msg logic if wanted, simple clear:
+            while (terminalOutput.children.length > 2) { 
+                terminalOutput.removeChild(terminalOutput.firstChild); 
             }
-        });
-    });
-});
+            break;
+        case 'contact':
+            printOutput('Email: hatim.haddou07@gmail.com | Phone: +33 6 21 04 34 62');
+            break;
+        case 'skills':
+            printOutput('AI, Cybersecurity, C++, Python, Embedded Systems...');
+            break;
+        case 'whoami':
+            printOutput('Hatim Haddou. The Engineer you are looking for.');
+            break;
+        case 'exit':
+            closeTerminal();
+            break;
+        default:
+            printOutput(`Command not found: ${cmd}`);
+    }
+}
 
-// --- 4. SCROLL ANIMATIONS (Reveal au défilement) ---
-gsap.utils.toArray('.bento-item').forEach((item, i) => {
-    gsap.from(item, {
-        scrollTrigger: {
-            trigger: item,
-            start: "top 85%",
-        },
-        y: 100,
-        opacity: 0,
-        duration: 0.8,
-        delay: i * 0.1, // Petit délai en cascade
-        ease: "power2.out"
-    });
-});
-
-gsap.from('.about-image', {
-    scrollTrigger: { trigger: '#about', start: "top 70%" },
-    x: -100, opacity: 0, duration: 1, ease: "power2.out"
-});
-
-gsap.from('.about-text', {
-    scrollTrigger: { trigger: '#about', start: "top 70%" },
-    x: 100, opacity: 0, duration: 1, ease: "power2.out"
+// --- 4. TILT EFFECT INIT ---
+VanillaTilt.init(document.querySelectorAll(".project-card"), {
+    max: 5,
+    speed: 400,
+    glare: true,
+    "max-glare": 0.2,
 });
