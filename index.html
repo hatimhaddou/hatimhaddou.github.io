@@ -3,164 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatim Haddou | Software Engineer Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <title>Hatim Haddou | Innovative Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <div class="cursor"></div>
+    <div class="cursor2"></div>
+
     <canvas id="neural-canvas"></canvas>
 
     <nav class="navbar">
-        <div class="logo">H.HADDOU<span class="dot">.</span></div>
+        <div class="logo">HH<span class="dot">.</span></div>
         <ul class="nav-links">
             <li><a href="#about">About</a></li>
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact" class="btn-contact">Contact Me</a></li>
+            <li><a href="#skills">Matrix</a></li>
+            <li><a href="#projects">Work</a></li>
+            <li><a href="#contact">Contact</a></li>
         </ul>
+        <a href="Hatim_Haddou_CV.pdf" download class="btn-download">
+            <i class="fas fa-download"></i> CV
+        </a>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
-            <h2 class="animate-text">Hello, I'm <span class="highlight">Hatim</span></h2>
-            <h1 class="glitch" data-text="Software Engineer">Software Engineer</h1>
-            <p class="subtitle">Specializing in AI, Cybersecurity & Data Engineering.</p>
+            <div class="badge">Open for Internships • April 2025</div>
+            <h1 class="glitch-text" data-text="Hatim Haddou">Hatim Haddou</h1>
+            <h2 class="typewriter">I engineer <span class="typing-text"></span></h2>
+            <p class="subtitle">Transforming complex problems into elegant, secure code. <br>Specialized in AI, Cybersecurity & Data Engineering.</p>
+            
             <div class="cta-group">
-                <a href="#projects" class="btn-primary">View My Work</a>
-                <a href="https://github.com/hatimhaddou" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
-                <a href="https://linkedin.com/in/hatim-haddou" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="#projects" class="btn-primary">Explore My Universe</a>
+                <div class="socials">
+                    <a href="https://github.com/hatimhaddou" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/hatim-haddou" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
             </div>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </header>
 
-    <section id="about" class="section glass">
-        <div class="container">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-grid">
-                <div class="about-img">
-                    <img src="hatim_photo.jpg" alt="Hatim Haddou">
-                </div>
-                <div class="about-text">
-                    <h3>Engineering the Future.</h3>
-                    <p>
-                        I am a second-year computer engineering student passionate about building secure, intelligent systems. 
-                        Winner of the <strong>Azuréen Digital Schools Innovation Award 2025</strong>, I combine theoretical knowledge with hands-on experience in 
-                        <strong>LLM Orchestration</strong>, <strong>Cybersecurity</strong>, and <strong>Embedded Systems</strong>.
-                    </p>
-                    <p>
-                        Currently seeking a full-time internship (April - July) to apply my skills in a challenging environment.
-                    </p>
-                    <div class="stats">
-                        <div class="stat-item">
-                            <span class="number">8+</span>
-                            <span class="label">Major Projects</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="number">3</span>
-                            <span class="label">Hackathons</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section id="skills" class="section">
         <div class="container">
-            <h2 class="section-title">Tech Stack</h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <i class="fas fa-brain icon"></i>
-                    <h3>AI & Data</h3>
-                    <p>Python, scikit-learn, RAG, LLM Orchestration, Pandas, NumPy, Azure AI.</p>
+            <h2 class="section-title">Skill Matrix <span class="accent">.</span></h2>
+            <p class="section-desc">Click on any skill to highlight related projects.</p>
+            
+            <div class="skills-wrapper">
+                
+                <div class="skill-category">
+                    <h3><i class="fas fa-code"></i> Languages</h3>
+                    <div class="skill-tags">
+                        <button class="skill-btn" data-tech="python">Python</button>
+                        <button class="skill-btn" data-tech="c">C</button>
+                        <button class="skill-btn" data-tech="cpp">C++</button>
+                        <button class="skill-btn" data-tech="sql">SQL</button>
+                        <button class="skill-btn" data-tech="js">JavaScript</button>
+                        <button class="skill-btn" data-tech="php">PHP</button>
+                    </div>
                 </div>
-                <div class="skill-card">
-                    <i class="fas fa-shield-halved icon"></i>
-                    <h3>Cybersecurity</h3>
-                    <p>Network Security, Attack Detection, Linux, Log Analysis, Random Forest.</p>
+
+                <div class="skill-category">
+                    <h3><i class="fas fa-brain"></i> AI & ML</h3>
+                    <div class="skill-tags">
+                        <button class="skill-btn" data-tech="sklearn">scikit-learn</button>
+                        <button class="skill-btn" data-tech="rag">RAG</button>
+                        <button class="skill-btn" data-tech="llm">LLM Orchestration</button>
+                        <button class="skill-btn" data-tech="embeddings">Embeddings</button>
+                        <button class="skill-btn" data-tech="azure-ai">Azure AI Foundry</button>
+                    </div>
                 </div>
-                <div class="skill-card">
-                    <i class="fas fa-code icon"></i>
-                    <h3>Development</h3>
-                    <p>C/C++, SQL, Flask, REST API, Git, Docker, JavaScript.</p>
+
+                <div class="skill-category">
+                    <h3><i class="fas fa-server"></i> Backend / Data</h3>
+                    <div class="skill-tags">
+                        <button class="skill-btn" data-tech="flask">Flask</button>
+                        <button class="skill-btn" data-tech="api">REST API</button>
+                        <button class="skill-btn" data-tech="mysql">MySQL</button>
+                        <button class="skill-btn" data-tech="json">JSON</button>
+                        <button class="skill-btn" data-tech="merise">Merise/UML</button>
+                    </div>
                 </div>
-                <div class="skill-card">
-                    <i class="fas fa-microchip icon"></i>
-                    <h3>Embedded</h3>
-                    <p>Arduino, C++, IoT Sensors, I2C/SPI, Digital Electronics.</p>
+
+                <div class="skill-category">
+                    <h3><i class="fas fa-tools"></i> Tools & DevOps</h3>
+                    <div class="skill-tags">
+                        <button class="skill-btn" data-tech="git">Git/GitHub</button>
+                        <button class="skill-btn" data-tech="docker">Docker</button>
+                        <button class="skill-btn" data-tech="linux">Linux</button>
+                        <button class="skill-btn" data-tech="arduino">Arduino</button>
+                        <button class="skill-btn" data-tech="vscode">VS Code</button>
+                    </div>
                 </div>
+
+                <div class="skill-category">
+                    <h3><i class="fas fa-network-wired"></i> Networks</h3>
+                    <div class="skill-tags">
+                        <button class="skill-btn" data-tech="net">IPv4/IPv6</button>
+                        <button class="skill-btn" data-tech="vlan">VLAN</button>
+                        <button class="skill-btn" data-tech="routing">Routing</button>
+                        <button class="skill-btn" data-tech="dns">DNS/DHCP</button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <section id="projects" class="section glass-dark">
+    <section id="projects" class="section">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
+            <h2 class="section-title">Selected Works <span class="accent">.</span></h2>
             <div class="projects-grid">
                 
-                <div class="project-card">
-                    <div class="card-header">
-                        <i class="fas fa-robot project-icon"></i>
-                        <div class="links">
-                            <a href="#"><i class="fab fa-github"></i></a>
+                <div class="project-card tilt" data-techs="python azure-ai rag llm mysql api">
+                    <div class="card-image" style="background-image: url('project1_placeholder.jpg');"></div>
+                    <div class="card-content">
+                        <div class="card-top">
+                            <h3>AI Multi-Agent Platform</h3>
+                            <a href="#" class="doc-link" title="View Documentation"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </div>
-                    <h3>AI Multi-Agent Platform</h3>
-                    <p class="description">
-                        <strong>Award Winner.</strong> A scalable platform using LLM Orchestration and RAG on Azure AI Foundry for automated technical support.
-                    </p>
-                    <div class="tags">
-                        <span>Python</span><span>Azure AI</span><span>RAG</span><span>MySQL</span>
+                        <p><strong>Innovation Award Winner.</strong> A scalable platform using LLM Orchestration and RAG on Azure AI Foundry for automated technical support.</p>
+                        <div class="tech-stack">
+                            <span>Azure AI</span><span>Python</span><span>RAG</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="project-card">
-                    <div class="card-header">
-                        <i class="fas fa-user-secret project-icon"></i>
-                        <div class="links">
-                            <a href="#"><i class="fab fa-github"></i></a>
+                <div class="project-card tilt" data-techs="python sklearn flask linux net git">
+                    <div class="card-image" style="background-image: url('project2_placeholder.jpg');"></div>
+                    <div class="card-content">
+                        <div class="card-top">
+                            <h3>Cyberattack Detection</h3>
+                            <a href="#" class="doc-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </div>
-                    <h3>Real-Time Cyber Attack Detection</h3>
-                    <p class="description">
-                        Implemented a Machine Learning model (Random Forest) to analyze server logs and detect threats in real-time via Flask API.
-                    </p>
-                    <div class="tags">
-                        <span>ML</span><span>Python</span><span>Flask</span><span>Linux</span>
+                        <p>Real-time threat detection using Random Forest ML models to analyze server logs via a Flask API on Linux.</p>
+                        <div class="tech-stack">
+                            <span>ML</span><span>Flask</span><span>Linux</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="project-card">
-                    <div class="card-header">
-                        <i class="fas fa-gamepad project-icon"></i>
-                        <div class="links">
-                            <a href="#"><i class="fab fa-github"></i></a>
+                <div class="project-card tilt" data-techs="cpp git vscode">
+                    <div class="card-image" style="background-image: url('project3_placeholder.jpg');"></div>
+                    <div class="card-content">
+                        <div class="card-top">
+                            <h3>Game of Life Engine</h3>
+                            <a href="#" class="doc-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </div>
-                    <h3>Game of Life (C++)</h3>
-                    <p class="description">
-                        Object-Oriented implementation of Conway’s Game of Life applying SOLID principles, Design Patterns, and Unit Testing.
-                    </p>
-                    <div class="tags">
-                        <span>C++</span><span>OOP</span><span>SFML</span><span>Unit Testing</span>
+                        <p>High-performance C++ implementation of Conway’s Game of Life applying SOLID principles and Design Patterns.</p>
+                        <div class="tech-stack">
+                            <span>C++</span><span>OOP</span><span>SFML</span>
+                        </div>
                     </div>
                 </div>
 
-                 <div class="project-card">
-                    <div class="card-header">
-                        <i class="fas fa-database project-icon"></i>
-                        <div class="links">
-                            <a href="#"><i class="fab fa-github"></i></a>
+                 <div class="project-card tilt" data-techs="mysql merise sql">
+                    <div class="card-image" style="background-image: url('project4_placeholder.jpg');"></div>
+                    <div class="card-content">
+                        <div class="card-top">
+                            <h3>IoT Database Architecture</h3>
+                            <a href="#" class="doc-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                        <p>Complex MySQL architecture for multi-sensor data analysis, optimized using Merise methodology (MCD/MLD).</p>
+                        <div class="tech-stack">
+                            <span>MySQL</span><span>Merise</span>
                         </div>
                     </div>
-                    <h3>Multi-Sensor Data DB</h3>
-                    <p class="description">
-                        Advanced SQL Architecture optimized for IoT metrics analysis using Merise Methodology (MCD/MLD).
-                    </p>
-                    <div class="tags">
-                        <span>MySQL</span><span>SQL Optimization</span><span>Merise</span>
+                </div>
+
+                <div class="project-card tilt" data-techs="arduino cpp net">
+                    <div class="card-image" style="background-image: url('project5_placeholder.jpg');"></div>
+                    <div class="card-content">
+                        <div class="card-top">
+                            <h3>Connected Strongbox</h3>
+                            <a href="#" class="doc-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                        <p>Secure prototyping with Arduino, integrating digital electronics and multi-factor authentication logic.</p>
+                        <div class="tech-stack">
+                            <span>Arduino</span><span>C++</span><span>Security</span>
+                        </div>
                     </div>
                 </div>
 
@@ -169,17 +196,45 @@
     </section>
 
     <footer id="contact">
-        <div class="container footer-content">
-            <h2>Let's build something secure.</h2>
-            <p>Open for internship opportunities starting April 2025.</p>
-            <a href="mailto:hatim.haddou07@gmail.com" class="btn-primary">hatim.haddou07@gmail.com</a>
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-text">
+                    <h2>Ready to <br> Innovate?</h2>
+                    <p>I am currently available for a full-time internship from <strong>April to July 2025</strong>.</p>
+                    
+                    <div class="contact-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:hatim.haddou07@gmail.com">hatim.haddou07@gmail.com</a>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+33 6 21 04 34 62</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Nice, France</span>
+                        </div>
+                    </div>
+
+                    <a href="mailto:hatim.haddou07@gmail.com" class="btn-giant">
+                        <span>Let's Talk</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Hatim Haddou. Built with <i class="fas fa-code"></i> and Neural Networks.</p>
+                <p>&copy; 2025 Hatim Haddou. Engineered with <i class="fas fa-code"></i> & Neural Networks.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hatimhaddou">GitHub</a>
+                    <a href="https://linkedin.com/in/hatim-haddou">LinkedIn</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 </body>
 </html>
