@@ -3,182 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatim Haddou | Digital Architect</title>
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,400,500,600,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Hatim Haddou | Cyber-Engineer Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
+    <div id="loader">
+        <div class="loader-text">INITIALIZING SYSTEM...</div>
+        <div class="loader-bar"><div class="bar-fill"></div></div>
+    </div>
 
-    <div class="noise-overlay"></div>
+    <div id="terminal-overlay">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span>hatim@root:~</span>
+            </div>
+            <div class="terminal-body" id="terminal-output">
+                <p>Welcome to Hatim's Hidden Shell v1.0</p>
+                <p>Type 'help' for available commands.</p>
+                <div class="input-line">
+                    <span class="prompt">hatim@root:~$</span>
+                    <input type="text" id="terminal-input" autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cursor"></div>
 
     <nav>
-        <div class="logo">HATIM<span class="accent">.</span></div>
-        <div class="nav-items">
-            <a href="#work" class="magnetic">Work</a>
-            <a href="#about" class="magnetic">About</a>
-            <a href="#contact" class="magnetic">Contact</a>
-        </div>
-        <a href="Hatim_Haddou_CV.pdf" download class="btn-cv magnetic">
-            <span>Download CV</span>
+        <div class="logo">HATIM<span class="highlight">.DEV</span></div>
+        <ul class="nav-links">
+            <li><a href="#about" class="glitch-link" data-text="Profile">Profile</a></li>
+            <li><a href="#work" class="glitch-link" data-text="Projects">Projects</a></li>
+            <li><a href="#contact" class="glitch-link" data-text="Contact">Contact</a></li>
+        </ul>
+        <a href="Hatim_Haddou_CV.pdf" download class="btn-cv">
+            <i class="fas fa-file-download"></i> CV
         </a>
     </nav>
 
     <header class="hero">
-        <div class="hero-container">
-            <p class="reveal-text mono">Software Engineering Student</p>
-            <h1 class="reveal-text-title">
-                Building <span class="gradient-text">Secure</span><br>
-                Digital <span class="gradient-text">Fortresses</span>
-            </h1>
-            <p class="hero-desc reveal-text">
-                Specialized in AI Orchestration, Cybersecurity & Data Engineering.
-                <br>Crafting intelligent systems from the kernel up.
+        <div class="hero-text">
+            <div class="status-badge"><span class="pulse"></span> System Online</div>
+            <h1 class="glitch-title">HATIM<br>HADDOU</h1>
+            <h2 class="subtitle">Software Engineering Student <br> <span class="highlight">AI & Cybersecurity</span></h2>
+            <p class="desc">
+                Building the digital architecture of tomorrow. Transforming complex data into secure, intelligent solutions.
             </p>
-            <div class="hero-cta reveal-text">
-                <a href="#work" class="btn-primary magnetic">See My Work</a>
+            <div class="cta-group">
+                <a href="#work" class="btn-main">View Protocols <i class="fas fa-arrow-right"></i></a>
+                <div class="hint-text">Press <kbd>T</kbd> for terminal</div>
             </div>
         </div>
         
-        <div class="hero-visual">
-            <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop" alt="Abstract AI Art">
-        </div>
+        <div id="canvas-container"></div>
     </header>
 
-    <section id="work" class="work-section">
+    <section id="work" class="section">
         <div class="container">
-            <div class="section-header">
-                <h2>Selected Works</h2>
-                <div class="skills-filter">
-                    <button class="filter-btn active magnetic" data-filter="all">All</button>
-                    <button class="filter-btn magnetic" data-filter="ai">AI / GenAI</button>
-                    <button class="filter-btn magnetic" data-filter="cyber">Cybersecurity</button>
-                    <button class="filter-btn magnetic" data-filter="dev">Software Eng.</button>
-                    <button class="filter-btn magnetic" data-filter="embedded">Embedded/IoT</button>
-                </div>
-            </div>
-
-            <div class="bento-grid">
+            <h2 class="section-title">Operational Projects <span class="count">[08]</span></h2>
+            
+            <div class="projects-grid">
                 
-                <div class="bento-item large" data-category="ai dev">
-                    <div class="bento-content">
-                        <div class="bento-tags">
-                            <span>Azure AI</span><span>LLM RAG</span><span>Python</span>
-                        </div>
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=800&auto=format&fit=crop" alt="AI Platform">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="card-content">
                         <h3>AI Multi-Agent Platform</h3>
-                        <p>Innovation Award Winner. Automated tech support using LLM Orchestration.</p>
-                        <a href="#" class="project-link magnetic"><i class="fas fa-arrow-right"></i></a>
+                        <p class="tech-stack">Azure AI • LLM Orchestration • RAG • MySQL</p>
+                        <p class="summary"><strong>Innovation Award Winner.</strong> Automated technical support platform using Multi-Agent Systems and Vector Databases.</p>
+                        <div class="card-links">
+                            <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=800&auto=format&fit=crop" alt="AI Project">
                 </div>
 
-                <div class="bento-item" data-category="cyber dev">
-                    <div class="bento-content">
-                        <div class="bento-tags">
-                            <span>Python</span><span>ML</span><span>Flask</span>
-                        </div>
-                        <h3>Cyberattack Detection</h3>
-                        <p>Real-time server log analysis & threat detection using Random Forest.</p>
-                        <a href="#" class="project-link magnetic"><i class="fas fa-arrow-right"></i></a>
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1563206767-5b1d972d9323?q=80&w=800&auto=format&fit=crop" alt="Cybersecurity">
+                        <div class="overlay"></div>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" alt="Cyber Security">
+                    <div class="card-content">
+                        <h3>Real-time Cyber Defense</h3>
+                        <p class="tech-stack">Python • Random Forest • Flask • Linux</p>
+                        <p class="summary">Server log analysis and attack detection system using ML (scikit-learn) and real-time API monitoring.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bento-item" data-category="dev">
-                    <div class="bento-content">
-                        <div class="bento-tags">
-                            <span>C++</span><span>OOP</span><span>SFML</span>
-                        </div>
-                        <h3>Game of Life Engine</h3>
-                        <p>Optimized C++ implementation with Design Patterns & Unit Testing.</p>
-                        <a href="#" class="project-link magnetic"><i class="fas fa-arrow-right"></i></a>
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800&auto=format&fit=crop" alt="Security">
+                        <div class="overlay"></div>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop" alt="Code">
+                    <div class="card-content">
+                        <h3>Secure Password Manager</h3>
+                        <p class="tech-stack">Python • Secrets • Regex • Crypto</p>
+                        <p class="summary">Robust generator & manager with strength analysis algorithms and secure file management.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bento-item wide" data-category="dev data">
-                    <div class="bento-content">
-                        <div class="bento-tags">
-                            <span>MySQL</span><span>Merise</span><span>Architecture</span>
-                        </div>
-                        <h3>IoT Data Architecture</h3>
-                        <p>Complex SQL architecture for multi-sensor metric analysis.</p>
-                        <a href="#" class="project-link magnetic"><i class="fas fa-arrow-right"></i></a>
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=800&auto=format&fit=crop" alt="Algorithm">
+                        <div class="overlay"></div>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1558494949-ef526b0042a0?q=80&w=800&auto=format&fit=crop" alt="Database">
+                    <div class="card-content">
+                        <h3>C++ Game of Life</h3>
+                        <p class="tech-stack">C++ • OOP • SFML • Design Patterns</p>
+                        <p class="summary">Optimized implementation of Conway’s cellular automaton applying SOLID principles and Unit Testing.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bento-item" data-category="embedded">
-                    <div class="bento-content">
-                        <div class="bento-tags">
-                            <span>Arduino</span><span>C++</span><span>Security</span>
-                        </div>
-                        <h3>Connected Strongbox</h3>
-                        <p>Embedded security system with Multi-factor Authentication.</p>
-                        <a href="#" class="project-link magnetic"><i class="fas fa-arrow-right"></i></a>
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1555664424-778a6902d043?q=80&w=800&auto=format&fit=crop" alt="IoT">
+                        <div class="overlay"></div>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1555664424-778a6902d043?q=80&w=800&auto=format&fit=crop" alt="Electronics">
+                    <div class="card-content">
+                        <h3>IoT Strongbox (MFA)</h3>
+                        <p class="tech-stack">Arduino • C++ • Embedded Security</p>
+                        <p class="summary">Digital safe prototype integrating Multi-Factor Authentication and electronic circuit logic.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=800&auto=format&fit=crop" alt="Database">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Sensor Data Architecture</h3>
+                        <p class="tech-stack">Advanced SQL • Merise • Optimization</p>
+                        <p class="summary">Complex DB architecture for multi-sensor analysis. Performance tuning and Integrity constraints.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop" alt="Sound Waves">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Sound Signal Transmission</h3>
+                        <p class="tech-stack">Python • NumPy • SciPy • DSP</p>
+                        <p class="summary">Data transmission via sound waves using digital band-pass filtering and signal processing.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="project-card" data-tilt>
+                    <div class="card-visual">
+                        <img src="https://images.unsplash.com/photo-1590055531615-f16d36ffe8ec?q=80&w=800&auto=format&fit=crop" alt="Weather">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Arduino Weather Station</h3>
+                        <p class="tech-stack">C++ • I2C/SPI • Memory Management</p>
+                        <p class="summary">Low-level embedded system optimizing memory for sensor data logging on SD cards.</p>
+                        <div class="card-links">
+                             <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
                 </div>
 
             </div>
         </div>
     </section>
 
-    <section id="about" class="about-section">
-        <div class="container about-container">
-            <div class="about-image reveal-image">
-                <div class="img-wrapper">
-                    <img src="hatim_photo.jpg" alt="Hatim Haddou">
-                </div>
-            </div>
-            <div class="about-text">
-                <h2 class="reveal-text-title">Engineering <br>with Purpose.</h2>
-                <p class="reveal-text">
-                    I don't just write code; I engineer solutions. Currently a second-year student, I bridge the gap between 
-                    <strong>complex algorithmic theory</strong> and <strong>practical implementation</strong>.
-                </p>
-                <div class="stats-grid reveal-text">
-                    <div class="stat">
-                        <span class="num">08+</span>
-                        <span class="label">Major Projects</span>
+    <section id="contact" class="section contact-section">
+        <div class="container">
+            <h2 class="section-title">Initialize Connection</h2>
+            
+            <div class="contact-layout">
+                <div class="contact-info">
+                    <h3>Transmission Details</h3>
+                    <p>I am available for full-time internships starting April 2025. Open to collaboration on AI & Cyber projects.</p>
+                    <div class="info-list">
+                        <div class="item"><i class="fas fa-map-marker-alt"></i> Nice, France</div>
+                        <div class="item"><i class="fas fa-envelope"></i> hatim.haddou07@gmail.com</div>
+                        <div class="item"><i class="fas fa-phone"></i> +33 6 21 04 34 62</div>
                     </div>
-                    <div class="stat">
-                        <span class="num">01</span>
-                        <span class="label">Hackathon Win</span>
-                    </div>
-                    <div class="stat">
-                        <span class="num">100%</span>
-                        <span class="label">Dedication</span>
+                    <div class="social-big">
+                        <a href="https://linkedin.com/in/hatim-haddou" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/hatimhaddou" target="_blank"><i class="fab fa-github"></i></a>
                     </div>
                 </div>
+
+                <form class="contact-form" action="mailto:hatim.haddou07@gmail.com" method="post" enctype="text/plain">
+                    <div class="form-group">
+                        <label>Identity / Name</label>
+                        <input type="text" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Frequency / Email</label>
+                        <input type="email" name="email" placeholder="john@corp.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Packet / Message</label>
+                        <textarea name="message" rows="5" placeholder="Project proposal..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        SEND PACKET <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </section>
 
-    <footer id="contact">
-        <div class="container footer-content">
-            <p class="footer-label">Available for Internship • April-July 2025</p>
-            <h2 class="footer-cta magnetic">Let's create <br>something iconic.</h2>
-            <a href="mailto:hatim.haddou07@gmail.com" class="email-link magnetic">hatim.haddou07@gmail.com</a>
-            
-            <div class="footer-links">
-                <a href="https://linkedin.com/in/hatim-haddou" target="_blank" class="magnetic">LinkedIn</a>
-                <a href="https://github.com/hatimhaddou" target="_blank" class="magnetic">GitHub</a>
-                <a href="Hatim_Haddou_CV.pdf" download class="magnetic">Resume</a>
-            </div>
-            
-            <div class="copyright">
-                &copy; 2025 Hatim Haddou. Engineered with Precision.
-            </div>
+    <footer>
+        <div class="container">
+            <p>SYSTEM STATUS: NORMAL | &copy; 2025 HATIM HADDOU</p>
+            <p class="easter-egg-hint"> Try typing 'T' ...</p>
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
