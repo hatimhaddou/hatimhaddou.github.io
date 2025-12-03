@@ -1,360 +1,272 @@
-// --- 1. SYSTEM INITIALIZATION (Loader) ---
+// --- 1. INITIALIZATION & LOADER ---
 window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
+    
+    // Animate Hero Elements with GSAP
+    gsap.to('.fade-in', {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out",
+        delay: 0.5
+    });
+
+    // Hide loader
     setTimeout(() => {
         loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 800);
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
     }, 1500);
 });
 
-// Custom Cursor logic
-document.addEventListener('mousemove', (event) => {
+// Custom Cursor
+document.addEventListener('mousemove', (e) => {
     const cursor = document.querySelector('.cursor');
-    cursor.style.left = event.clientX + 'px';
-    cursor.style.top = event.clientY + 'px';
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
 });
 
-
 // =================================================================
-// --- 2. THREE.JS ADVANCED SCENE (THE "SPECTACULAR ORB") ---
+// --- 2. THREE.JS SCENE (THE ORB) ---
 // =================================================================
 const container = document.getElementById('canvas-container');
-const scene = new THREE.Scene();
-// Camera setup for better depth perspective
-const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-camera.position.z = 18; // Move camera back a bit to see the large orb
 
-const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimization
-container.appendChild(renderer.domElement);
+// Ensure container exists
+if(container) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 12;
 
-// Lights for realism
-const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
-scene.add(ambientLight);
-const pointLight = new THREE.PointLight(0x00f3ff, 2, 50);
-pointLight.position.set(5, 5, 5);
-scene.add(pointLight);
-
-// --- GLOBAL VARIABLES FOR INTERACTION ---
-let isRevealed = false;
-let spinVelocity = 0;
-let lastMouseX = 0;
-let lastMouseY = 0;
-const group = new THREE.Group(); // Everything will be inside this group for easy rotation
-scene.add(group);
-
-
-// ============================
-// PART A: THE CORE (Hidden Initially)
-// ============================
-// A dense, metallic looking icosahedron core
-const coreGeometry = new THREE.IcosahedronGeometry(1.5, 1); // Slightly detailed
-const coreMaterial = new THREE.MeshStandardMaterial({
-    color: 0x111111,
-    metalness: 0.9,
-    roughness: 0.1,
-    emissive: 0x7000ff, // Purple glow from inside
-    emissiveIntensity: 0.5,
-    wireframe: false
-});
-const core = new THREE.Mesh(coreGeometry, coreMaterial);
-core.visible = false; // Hidden at start
-group.add(core);
-
-// Add a wireframe cage around the core for extra tech look
-const cageGeo = new THREE.IcosahedronGeometry(1.6, 1);
-const cageMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.3 });
-const cage = new THREE.Mesh(cageGeo, cageMat);
-core.add(cage); // Attached to core so they rotate together
-
-
-// ============================
-// PART B: THE GAS ORB (Realistic Smoke Effect)
-// ============================
-// Technique: Layered transparent spheres with noisy textures moving in opposite directions.
-// This simulates volumetric smoke without the heavy computational cost.
-
-// Helper function to create noise texture (Simulating smoke clouds)
-function createNoiseTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256; canvas.height = 256;
-    const context = canvas.getContext('2d');
-    const simplex = new SimplexNoise();
-    const imgData = context.createImageData(canvas.width, canvas.height);
-    for (let i = 0; i < imgData.data.length; i += 4) {
-        const x = (i / 4) % canvas.width;
-        const y = Math.floor((i / 4) / canvas.width);
-        // Create cloudy noise pattern
-        let noise = (simplex.noise2D(x / 50, y / 50) + 1) / 2; 
-        noise += (simplex.noise2D(x / 20, y / 20) + 1) / 4;
-        noise /= 1.5;
-        
-        const val = Math.floor(noise * 255);
-        imgData.data[i] = 0x00;     // R (Cyan tint added in material)
-        imgData.data[i+1] = 0xf3;   // G
-        imgData.data[i+2] = 0xff;   // B
-        imgData.data[i+3] = val;    // Alpha (transparency based on noise)
-    }
-    context.putImageData(imgData, 0, 0);
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    return texture;
-}
-
-const gasTexture1 = createNoiseTexture();
-const gasTexture2 = createNoiseTexture(); // Second layer for complexity
-
-const gasGeometry = new THREE.SphereGeometry(4, 64, 64); // Large sphere
-
-// Inner Gas Layer
-const gasMaterial1 = new THREE.MeshPhongMaterial({
-    map: gasTexture1,
-    transparent: true,
-    opacity: 0.6,
-    depthWrite: false, // Important for transparency overlap
-    blending: THREE.AdditiveBlending, // Makes it look glowing/gaseous
-    side: THREE.DoubleSide,
-    color: 0x00aaff // Deep Blue/Cyan
-});
-const gasOrb1 = new THREE.Mesh(gasGeometry, gasMaterial1);
-group.add(gasOrb1);
-
-// Outer Gas Layer (Slightly larger, different texture, rotating opposite)
-const gasMaterial2 = new THREE.MeshPhongMaterial({
-    map: gasTexture2,
-    transparent: true,
-    opacity: 0.4,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    side: THREE.DoubleSide,
-    color: 0x7000ff // Purple tint overlapping
-});
-const gasOrb2 = new THREE.Mesh(new THREE.SphereGeometry(4.1, 64, 64), gasMaterial2);
-group.add(gasOrb2);
-
-
-// ============================
-// PART C: THE AURA (Fresnel Shader Glow)
-// ============================
-// Using a custom shader material to create a realistic "edge glow" effect (Fresnel).
-// This makes the edges of the sphere glow brighter than the center.
-
-const auraVertexShader = `
-varying vec3 vNormal;
-varying vec3 viewDir;
-void main() {
-    vNormal = normalize(normalMatrix * normal);
-    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    viewDir = normalize(-mvPosition.xyz);
-    gl_Position = projectionMatrix * mvPosition;
-}
-`;
-
-const auraFragmentShader = `
-varying vec3 vNormal;
-varying vec3 viewDir;
-uniform float time;
-void main() {
-    // Fresnel calculation: dot product of view direction and surface normal
-    float fresnel = dot(viewDir, vNormal);
-    // Invert and power for sharper edge glow
-    float glow = pow(1.0 - fresnel, 3.0); 
-    
-    // Pulsating color between Cyan and Purple
-    vec3 cyan = vec3(0.0, 0.95, 1.0);
-    vec3 purple = vec3(0.44, 0.0, 1.0);
-    vec3 finalColor = mix(cyan, purple, sin(time * 2.0) * 0.5 + 0.5);
-
-    gl_FragColor = vec4(finalColor * glow * 2.0, glow); // Multiplied intensity
-}
-`;
-
-const auraMaterial = new THREE.ShaderMaterial({
-    uniforms: { time: { value: 1.0 } },
-    vertexShader: auraVertexShader,
-    fragmentShader: auraFragmentShader,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    side: THREE.BackSide // Render inside out for better aura effect on top
-});
-
-const auraOrb = new THREE.Mesh(new THREE.SphereGeometry(4.3, 64, 64), auraMaterial);
-group.add(auraOrb);
-
-
-// ============================
-// INTERACTION & ANIMATION LOOP
-// ============================
-
-// Mouse movement to calculate spin velocity
-document.addEventListener('mousemove', (e) => {
-    const deltaX = e.clientX - lastMouseX;
-    const deltaY = e.clientY - lastMouseY;
-    // Calculate speed based on mouse movement distance
-    const speed = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-    
-    // Add to spin velocity smoothly
-    spinVelocity += speed * 0.0005; 
-
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-});
-
-// RAYCASTER FOR CLICKING THE CORE
-const raycaster = new THREE.Raycaster();
-const mouseVector = new THREE.Vector2();
-
-container.addEventListener('click', (e) => {
-    // Only check for clicks if the core is revealed
-    if(!isRevealed) return;
-
-    // Calculate mouse position in normalized device coordinates (-1 to +1)
-    const rect = container.getBoundingClientRect();
-    mouseVector.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
-    mouseVector.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouseVector, camera);
-
-    // Check intersection specifically with the CORE mesh
-    const intersects = raycaster.intersectObject(core);
-
-    if (intersects.length > 0) {
-        // CLICK DETECTED ON CORE!
-        console.log("Core accessed. Downloading CV...");
-        // Trigger the hidden download link
-        document.getElementById('hidden-cv-link').click();
-        
-        // Optional: Add a visual click feedback effect here
-        gsap.to(core.scale, {x:1.2, y:1.2, z:1.2, yoyo:true, repeat:1, duration:0.2});
-    }
-});
-
-
-let time = 0;
-const animate = () => {
-    requestAnimationFrame(animate);
-    time += 0.01;
-
-    // 1. Base Rotation (always turning slightly)
-    group.rotation.y += 0.002;
-    core.rotation.x += 0.01;
-    core.rotation.z += 0.005;
-
-    // 2. Apply Spin Velocity from mouse interaction
-    group.rotation.y += spinVelocity;
-    // Decay velocity (friction)
-    spinVelocity *= 0.95; 
-
-    // 3. Animate Gas Textures (Swirling effect)
-    // Move texture offsets in opposite directions
-    gasTexture1.offset.x += 0.001 + spinVelocity * 0.1;
-    gasTexture2.offset.x -= 0.0015 + spinVelocity * 0.1;
-    gasTexture1.offset.y += 0.0005;
-    
-    // 4. Update Shader Uniforms
-    auraMaterial.uniforms.time.value = time;
-
-    // ============================
-    // THE REVELATION LOGIC (Spectacular Effect)
-    // ============================
-    // Threshold: If spinning fast enough, trigger revelation
-    if (Math.abs(spinVelocity) > 0.15 && !isRevealed) {
-        isRevealed = true;
-        console.log("Velocity threshold reached. Dissipating energy field...");
-        
-        // GSAP Animations for smooth dissipation
-        // Fade out Gas layers
-        gsap.to(gasMaterial1, { opacity: 0, duration: 2, ease: "power2.out" });
-        gsap.to(gasMaterial2, { opacity: 0, duration: 2.2, ease: "power2.out" });
-        // Fade out and shrink Aura
-        gsap.to(auraMaterial, { opacity: 0, duration: 1.5, ease: "power2.out" });
-        gsap.to(auraOrb.scale, { x: 0.1, y: 0.1, z: 0.1, duration: 1.5, ease: "expo.in" });
-        
-        // Reveal Core (Scale up and show)
-        core.visible = true;
-        core.scale.set(0,0,0); // Start small
-        gsap.to(core.scale, { x: 1, y: 1, z: 1, duration: 1, delay: 0.5, ease: "back.out(1.7)" });
-        
-        // Update hint text
-        document.querySelector('.hint-text').innerHTML = "Energy dissipated. <span style='color:var(--primary)'>Click the Core to access data.</span>";
-    }
-
-    // Optional: Mechanic to reform the orb if it stops spinning?
-    // For now, let's keep it revealed once opened for simplicity in accessing the CV.
-
-    renderer.render(scene, camera);
-};
-
-animate();
-
-// Handle Resize
-window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
 
+    // Lights
+    scene.add(new THREE.AmbientLight(0x404040, 2));
+    const pointLight = new THREE.PointLight(0x00f3ff, 2, 50);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
 
-// =================================================================
-// --- 3. EASTER EGG (Hacker Terminal) - UNCHANGED ---
-// =================================================================
-const terminalOverlay = document.getElementById('terminal-overlay');
-const terminalInput = document.getElementById('terminal-input');
-const terminalOutput = document.getElementById('terminal-output');
-let isTerminalOpen = false;
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // --- GAMEPLAY VARIABLES ---
+    let orbHealth = 100;
+    let spinVelocity = 0;
+    let isRevealed = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+
+    // --- A. THE CORE (Icosahedron) ---
+    const coreGeo = new THREE.IcosahedronGeometry(1.2, 1);
+    const coreMat = new THREE.MeshStandardMaterial({
+        color: 0x111111, roughness: 0.2, metalness: 0.9,
+        emissive: 0x7000ff, emissiveIntensity: 0.8
+    });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    core.scale.set(0.1, 0.1, 0.1); // Starts small/hidden
+    group.add(core);
+
+    const cageGeo = new THREE.IcosahedronGeometry(1.4, 0);
+    const cageMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true });
+    const cage = new THREE.Mesh(cageGeo, cageMat);
+    core.add(cage);
+
+    // --- B. THE GAS (Procedural Noise Texture) ---
+    // Function to generate noise texture internally (No external dependency)
+    function createCloudTexture() {
+        const size = 128;
+        const data = new Uint8Array(size * size * 4);
+        for (let i = 0; i < size * size * 4; i += 4) {
+            const val = Math.floor(Math.random() * 255); // Simple noise
+            data[i] = 0; // R
+            data[i+1] = 200; // G
+            data[i+2] = 255; // B
+            data[i+3] = Math.max(0, val - 100); // Alpha
+        }
+        const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+        texture.needsUpdate = true;
+        return texture;
+    }
+
+    const gasTex = createCloudTexture();
+    const gasGeo = new THREE.SphereGeometry(3.5, 32, 32);
+    const gasMat = new THREE.MeshBasicMaterial({
+        map: gasTex, transparent: true, opacity: 0.6,
+        depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+    });
+    const gasOrb = new THREE.Mesh(gasGeo, gasMat);
+    group.add(gasOrb);
+
+    const gasOrb2 = new THREE.Mesh(new THREE.SphereGeometry(3.6, 32, 32), 
+        new THREE.MeshBasicMaterial({
+            map: gasTex, transparent: true, opacity: 0.3,
+            depthWrite: false, blending: THREE.AdditiveBlending, color: 0x7000ff
+        })
+    );
+    group.add(gasOrb2);
+
+    // --- C. AURA (Glow) ---
+    const auraGeo = new THREE.SphereGeometry(3.8, 32, 32);
+    const auraMat = new THREE.ShaderMaterial({
+        uniforms: { 
+            c: { type: "f", value: 0.5 },
+            p: { type: "f", value: 3.0 },
+            glowColor: { type: "c", value: new THREE.Color(0x00f3ff) },
+            viewVector: { type: "v3", value: camera.position }
+        },
+        vertexShader: `
+            uniform vec3 viewVector;
+            uniform float c;
+            uniform float p;
+            varying float intensity;
+            void main() {
+                vec3 vNormal = normalize( normalMatrix * normal );
+                vec3 vNormel = normalize( normalMatrix * viewVector );
+                intensity = pow( c - dot(vNormal, vNormel), p );
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+            }
+        `,
+        fragmentShader: `
+            uniform vec3 glowColor;
+            varying float intensity;
+            void main() {
+                vec3 glow = glowColor * intensity;
+                gl_FragColor = vec4( glow, 1.0 );
+            }
+        `,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+    });
+    const aura = new THREE.Mesh(auraGeo, auraMat);
+    group.add(aura);
+
+    // --- INTERACTION ---
+    document.addEventListener('mousemove', (e) => {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        const speed = Math.sqrt(dx*dx + dy*dy);
+        spinVelocity += speed * 0.0002; // Add spin
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+
+    // Click Core to Download
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    container.addEventListener('click', (e) => {
+        if(!isRevealed) return;
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject(core);
+        if(intersects.length > 0) {
+            document.getElementById('hidden-cv-link').click();
+            gsap.to(core.scale, {x:1.5, y:1.5, z:1.5, yoyo:true, repeat:1, duration:0.2});
+        }
+    });
+
+    // --- ANIMATION LOOP ---
+    const animate = () => {
+        requestAnimationFrame(animate);
+
+        // 1. Idle Rotation (Planet effect)
+        group.rotation.y += 0.003; 
+        
+        // 2. Interaction Spin
+        group.rotation.y += spinVelocity;
+        group.rotation.x += spinVelocity * 0.5;
+        spinVelocity *= 0.95; // Friction
+
+        // 3. Health Logic
+        if(Math.abs(spinVelocity) > 0.1 && orbHealth > 0) {
+            orbHealth -= 0.5;
+        } else if (Math.abs(spinVelocity) < 0.01 && orbHealth < 100 && !isRevealed) {
+            orbHealth += 0.2; // Regenerate if stop spinning
+        }
+
+        // Update UI
+        const healthBar = document.getElementById('orb-health');
+        healthBar.style.width = orbHealth + '%';
+        if(orbHealth < 30) healthBar.style.backgroundColor = '#ff2a2a';
+        else healthBar.style.backgroundColor = '#00f3ff';
+
+        // 4. Visual Dissipation
+        const opacity = orbHealth / 100;
+        gasMat.opacity = 0.6 * opacity;
+        gasOrb2.material.opacity = 0.3 * opacity;
+        auraMat.uniforms.c.value = 0.5 * opacity;
+
+        // 5. Reveal Core
+        if(orbHealth <= 0 && !isRevealed) {
+            isRevealed = true;
+            document.querySelector('.orb-instruction').innerText = "SHIELD DOWN. CLICK CORE.";
+            document.querySelector('.orb-instruction').style.color = "#ff2a2a";
+            gsap.to(core.scale, {x:1, y:1, z:1, duration: 1, ease:"back.out"});
+        }
+
+        core.rotation.x += 0.01;
+        core.rotation.y += 0.02;
+
+        renderer.render(scene, camera);
+    };
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+}
+
+// --- 3. TERMINAL ---
+const termOverlay = document.getElementById('terminal-overlay');
+const termInput = document.getElementById('terminal-input');
+const termOutput = document.getElementById('terminal-output');
+let termOpen = false;
 
 document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 't' && !isTerminalOpen && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-        isTerminalOpen = true;
-        terminalOverlay.style.display = 'flex';
-        terminalInput.focus();
-    } else if (e.key === 'Escape' && isTerminalOpen) {
-        closeTerminal();
+    if(e.key.toLowerCase() === 't' && !termOpen) {
+        termOpen = true;
+        termOverlay.style.display = 'flex';
+        termInput.focus();
+    } else if (e.key === 'Escape' && termOpen) {
+        termOpen = false;
+        termOverlay.style.display = 'none';
     }
 });
 
-terminalOverlay.addEventListener('click', (e) => {
-    if (e.target === terminalOverlay) closeTerminal();
-});
+termOverlay.addEventListener('click', (e) => { if(e.target === termOverlay) { termOpen = false; termOverlay.style.display = 'none'; }});
 
-function closeTerminal() {
-    isTerminalOpen = false;
-    terminalOverlay.style.display = 'none';
-}
-
-terminalInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        const command = terminalInput.value.toLowerCase().trim();
-        printOutput(`hatim@root:~$ ${command}`);
-        processCommand(command);
-        terminalInput.value = '';
+termInput.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') {
+        const cmd = termInput.value.toLowerCase().trim();
+        const p = document.createElement('p');
+        p.textContent = `hatim@root:~$ ${cmd}`;
+        termOutput.appendChild(p);
+        
+        let response = "";
+        switch(cmd) {
+            case 'help': response = "Available: help, contact, projects, clear, exit"; break;
+            case 'contact': response = "hatim.haddou07@gmail.com"; break;
+            case 'projects': response = "Check the grid below."; break;
+            case 'clear': termOutput.innerHTML = ""; break;
+            case 'exit': termOpen = false; termOverlay.style.display = 'none'; break;
+            default: response = `Command not found: ${cmd}`;
+        }
+        if(response) {
+            const r = document.createElement('p');
+            r.style.color = "#00f3ff";
+            r.textContent = response;
+            termOutput.appendChild(r);
+        }
+        termInput.value = "";
+        termOutput.scrollTop = termOutput.scrollHeight;
     }
 });
 
-function printOutput(text) {
-    const p = document.createElement('p');
-    p.textContent = text;
-    terminalOutput.insertBefore(p, terminalOutput.lastElementChild);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
-}
-
-function processCommand(cmd) {
-    switch(cmd) {
-        case 'help': printOutput('Available commands: help, clear, contact, skills, whoami, exit'); break;
-        case 'clear': while (terminalOutput.children.length > 2) { terminalOutput.removeChild(terminalOutput.firstChild); } break;
-        case 'contact': printOutput('Email: hatim.haddou07@gmail.com | Phone: +33 6 21 04 34 62'); break;
-        case 'skills': printOutput('AI, Cybersecurity, C++, Python, Embedded Systems, Azure AI...'); break;
-        case 'whoami': printOutput('Hatim Haddou. The Engineer integrating AI with secure infrastructure.'); break;
-        case 'exit': closeTerminal(); break;
-        default: printOutput(`Command not found: ${cmd}`);
-    }
-}
-
-// --- 4. TILT EFFECT INIT ---
-VanillaTilt.init(document.querySelectorAll(".project-card"), { max: 5, speed: 400, glare: true, "max-glare": 0.2 });
+// Tilt Init
+VanillaTilt.init(document.querySelectorAll(".project-card"), { max: 10, speed: 400, glare: true, "max-glare": 0.2 });
